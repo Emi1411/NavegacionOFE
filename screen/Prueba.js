@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {View,Text, ActivityIndicator} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import {Card} from 'native-base';
 
 class Usuario extends Component{
   constructor(props){
@@ -11,11 +12,11 @@ class Usuario extends Component{
   }//end constructor
   async componentDidMount(){
     try{
-      const response = await fetch('https://swapi.co/api/films/2/');
+      const response = await fetch('https://swapi.co/api/films/?format=json');
       const responseJson = await response.json();
       this.setState({
         isLoading: false,
-        dataSource: responseJson.planets,
+        dataSource: responseJson.results,
       },function(){
       });
     }catch(error){
@@ -35,10 +36,14 @@ class Usuario extends Component{
       <View>
         <FlatList 
           data={this.state.dataSource}
-          renderItem={({item}) => 
-            <Text>{item.title}, {item.releaseYear}</Text>
+          renderItem={({item}) =>
+            <Card>
+              <Text>Titulo: {item.title}</Text>
+              <Text>Episodio: {item.episode_id}</Text>
+              <Text>Director: {item.director}</Text>
+            </Card> 
           }
-          keyExtractor = {({id},index)=>id} />
+          keyExtractor = {({episode_id},index)=>episode_id} />
       </View>
     );
   }//end render
