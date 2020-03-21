@@ -1,18 +1,20 @@
 import React,{Component} from 'react';
-import {StyleSheet, ActivityIndicator,Modal,View} from 'react-native';
-import { Container, Header, Content, Card, CardItem, Text, Body,Button,Item,Input,Icon } from 'native-base';
+import {StyleSheet, ActivityIndicator,Modal,View, Alert} from 'react-native';
+import { Container,Content, Card, CardItem, Text, Body,Button,Item,Input,Icon } from 'native-base';
+import api from '../data/api';
 
 class Login extends Component {
 
   constructor(props){
     super(props);
     this.state={
-      nombre:'',
-      password:'',
-      isloading: true,
+      nomusu:'',
+      pass:''
+      //isloading: true,
     }
   }
-  ShowHideActivityIndicator = () =>{
+
+  /*ShowHideActivityIndicator = () =>{
     const navegar=this.props.navigation;
     if(this.state.isLoading == true)
     {
@@ -22,33 +24,28 @@ class Login extends Component {
     {
       this.setState({isLoading: true})
       setTimeout(() => {
-        navegar.navigate('Prueba'/*,{nombres:this.state.nombre,pass:this.state.password}*/);
+        this.login();
         this.setState({isLoading: false})
       },2000);
+    }
+  }*/
+
+  login = async() => {
+    let validarLog = await api.validarLog(this.state.nomusu,this.state.pass)
+
+    if(validarLog.status == 1){
+      this.props.navigation.navigate('Prueba');
+    }else{
+      Alert.alert('Usuario o clave inválidos');
     }
   }
   
 
 render(){
   const navegar=this.props.navigation;
+
   return (
     <Container>
-        <Header />
-        <View style={misEstilos.MainContainer}>
-        {
-        this.state.isLoading ?  
-        <Modal
-        transparent = {true} 
-        animationType = {'none'} 
-        visible = {this.state.isloading}> 
-          <View style = {misEstilos.modalBackground}> 
-            <View style = {misEstilos.activityIndicatorWrapper}> 
-              <ActivityIndicator style={{padding: 70}} /> 
-            </View> 
-          </View> 
-        </Modal> : null
-        }
-        </View>
         <Content padder contentContainerStyle ={misEstilos.content}>
           <Card>
             <CardItem header bordered>
@@ -58,16 +55,18 @@ render(){
               <Body>
                 <Item inlineLabel>
                   <Icon type = 'FontAwesome' name='user'></Icon>
-                  <Input placeholder='Nombre de usuario' value={this.state.nombre} onChangeText={(nombre)=> this.setState({nombre})} />
+                  <Input placeholder='Nombre de usuario' 
+                  onChangeText={(nomusu) => this.setState({nomusu})} />
                 </Item>
                 <Item inlineLabel last>
                   <Icon type = 'FontAwesome' name = 'lock'></Icon>
-                  <Input placeholder='Contraseña' value={this.state.password} onChangeText={(password)=> this.setState({password})} secureTextEntry={true} />
+                  <Input placeholder='Contraseña' 
+                  onChangeText={(pass) => this.setState({pass})} secureTextEntry={true} />
                 </Item>
               </Body>
             </CardItem>
             <CardItem footer bordered>
-            <Button primary style={misEstilos.boton} onPress={this.ShowHideActivityIndicator}><Text> Entrar </Text></Button>
+            <Button primary style={misEstilos.boton} onPress={this.login}><Text> Entrar </Text></Button>
             </CardItem>
           </Card>
           <Text style={misEstilos.textCenter}>No tienes cuenta:</Text>
@@ -117,3 +116,21 @@ const misEstilos = StyleSheet.create({
 
 //AppRegistry.registerComponent('Login', () => Login);
 export default Login;
+
+/*
+<View style={misEstilos.MainContainer}>
+        {
+        this.state.isLoading ?  
+        <Modal
+        transparent = {true} 
+        animationType = {'none'} 
+        visible = {this.state.isloading}> 
+          <View style = {misEstilos.modalBackground}> 
+            <View style = {misEstilos.activityIndicatorWrapper}> 
+              <ActivityIndicator style={{padding: 70}} /> 
+            </View> 
+          </View> 
+        </Modal> : null
+        }
+        </View>
+*/
